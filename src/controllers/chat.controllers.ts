@@ -25,6 +25,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
         );
         break;
       case "epub":
+        console.log("process epub");
         const [epubDataB64, epubFilename] = [
           req.body.epub_data_b64,
           req.body.epub_filename,
@@ -39,6 +40,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
         );
         break;
       case "url":
+        console.log("processing url");
         const url = req.body.url;
         response = await axios.post(
           "https://stage.aipdf.ai/ai-server/api/process-data-url",
@@ -66,12 +68,10 @@ export const initChatHandler = async (req: Request, res: Response) => {
       file_id: req.body.file_id,
       demo_chat: req.body.demo_chat,
     };
-    console.log(data);
     const response = await axios.post(
       "https://stage.aipdf.ai/ai-server/api/chat-initial",
       data
     );
-    console.log("here is the result ");
     console.log(response.data);
     return res.status(200).send("Chat initialized");
   } catch (error: any) {
@@ -91,7 +91,6 @@ export const regularChatHandler = async (req: Request, res: Response) => {
       conversation: req.body.conversation,
       is_suggested_question: req.body.is_suggested_question,
     };
-    console.log(data);
     const response = await axios.post(
       "https://stage.aipdf.ai/ai-server/api/chat-continue",
       data

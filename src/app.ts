@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { ChatRoutes } from "./routes/chat.routes";
+import { FirebaseRoutes } from "./routes/firebase.routes";
 
 const app = express();
 app.use(
@@ -17,5 +18,5 @@ app.get("/", async (req: Request, res: Response) => {
   });
 });
 app.use("/api/chat/", ChatRoutes);
-
+app.use("/api/firebase", FirebaseRoutes);
 export { app };

@@ -68,6 +68,7 @@ export const initChatHandler = async (req: Request, res: Response) => {
       file_id: req.body.file_id,
       demo_chat: req.body.demo_chat,
     };
+    console.log(data);
     const response = await axios.post(
       "https://stage.aipdf.ai/ai-server/api/chat-initial",
       data
@@ -91,6 +92,7 @@ export const regularChatHandler = async (req: Request, res: Response) => {
       conversation: req.body.conversation,
       is_suggested_question: req.body.is_suggested_question,
     };
+    console.log(data);
     const response = await axios.post(
       "https://stage.aipdf.ai/ai-server/api/chat-continue",
       data

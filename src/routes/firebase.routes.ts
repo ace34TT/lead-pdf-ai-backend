@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteDocumentByIdHandler,
   findDataHandler,
   findDocumentById,
   insertDataHandler,
@@ -12,5 +13,6 @@ router.post("/insert-document", insertDataHandler);
 router.post("/find-documents", findDataHandler);
 router.post("/update-document", updateDataHandler);
 router.post("/find-document", findDocumentById);
+router.post("/delete-document", deleteDocumentByIdHandler);
 
 export { router as FirebaseRoutes };

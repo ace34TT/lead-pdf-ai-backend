@@ -15,6 +15,7 @@ export const insertDataHandler = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).send(error);
   }
 };
 export const findDataHandler = async (req: Request, res: Response) => {
@@ -63,6 +64,7 @@ export const updateDataHandler = async (req: Request, res: Response) => {
     return res.status(200).send("document updated successfully");
   } catch (error) {
     console.log(error);
+    res.status(500).send(error);
   }
 };
 export const findDocumentById = async (req: Request, res: Response) => {
@@ -86,5 +88,22 @@ export const findDocumentById = async (req: Request, res: Response) => {
         message: "No such document!",
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
+export const deleteDocumentByIdHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const [collectionName, docId] = [req.body.collectionName, req.body.docId];
+    const docRef = firestore.collection(collectionName).doc(docId);
+    docRef.delete();
+    return res.status(200).send("document deleted successfully");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
 };

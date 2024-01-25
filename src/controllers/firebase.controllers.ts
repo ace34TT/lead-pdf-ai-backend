@@ -107,3 +107,37 @@ export const deleteDocumentByIdHandler = async (
     res.status(500).send(error);
   }
 };
+export const deleteUserHandler = async (req: Request, res: Response) => {
+  const [uid, email] = [req.body.uid, req.body.email];
+  try {
+    let query = firestore.collection("pdfs").where("email_id", "==", email);
+    let snapshot = await query.get();
+
+    for (const doc of snapshot.docs) {
+      console.log("pdf : " + doc.id);
+
+      let _query = firestore.collection("chats").where("file_id", "==", doc.id);
+      let _snapshot = await _query.get();
+
+      for (const _doc of _snapshot.docs) {
+        console.log("--------" + _doc.id);
+        try {
+          await _doc.ref.delete();
+          console.log(`Deleted document ${_doc.id}`);
+        } catch (error) {
+          console.log(`Error deleting document ${_doc.id}:`, error);
+        }
+      }
+      try {
+        await doc.ref.delete();
+        console.log(`Deleted document ${doc.id}`);
+      } catch (error) {
+        console.log(`Error deleting document ${doc.id}:`, error);
+      }
+    }
+    firebase.auth().deleteUser(uid);
+    return res.status(200).send("user deleted successfully");
+  } catch (error) {
+    console.log("Error getting documents:", error);
+  }
+};

@@ -5,6 +5,7 @@ import {
   findDataHandler,
   findDocumentById,
   insertDataHandler,
+  signInUserWithEmailLinkHandler,
   updateDataHandler,
 } from "../controllers/firebase.controllers";
 
@@ -16,4 +17,5 @@ router.post("/update-document", updateDataHandler);
 router.post("/find-document", findDocumentById);
 router.post("/delete-document", deleteDocumentByIdHandler);
 router.post("/delete-user", deleteUserHandler);
+router.post("/sign-in-with-mail", signInUserWithEmailLinkHandler);
 export { router as FirebaseRoutes };

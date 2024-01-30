@@ -142,34 +142,31 @@ export const deleteUserHandler = async (req: Request, res: Response) => {
     console.log("Error getting documents:", error);
   }
 };
-export const signInUserWithEmailLinkHandler = async (
-  req: Request,
-  res: Response
-) => {
-  const [email] = [req.body.email];
-  console.log("processing with " + email);
-
-  try {
-    var link = await firebase.auth().generateSignInWithEmailLink(email, {
-      url: "http://localhost:5173",
-      handleCodeInApp: true,
-      iOS: {
-        bundleId: "com.shiftmadagascar.aipdf",
-        // universalLink: "https://your-project-domain.web.app/welcome",
-      },
-      android: {
-        packageName: "com.shiftmadagascar.aipdf",
-        installApp: true,
-        minimumVersion: "12",
-        // universalLink: "https://your-project-domain.web.app/welcome",
-      },
-      dynamicLinkDomain: "shiftmadagascar.page.link",
-    });
-    console.log(link);
-    sendMail(email, [link]);
-    return res.status(200).send("process done");
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send("process error: " + error);
-  }
-};
+// export const signInUserWithEmailLinkHandler = async (
+//   req: Request,
+//   res: Response
+// ) => {
+//   const [email] = [req.body.email];
+//   console.log("processing with " + email);
+//   try {
+//     var link = await firebase.auth().generateSignInWithEmailLink(email, {
+//       url: "http://localhost:5173",
+//       handleCodeInApp: true,
+//       iOS: {
+//         bundleId: "com.shiftmadagascar.aipdf",
+//       },
+//       android: {
+//         packageName: "com.shiftmadagascar.aipdf",
+//         installApp: true,
+//         minimumVersion: "12",
+//       },
+//       dynamicLinkDomain: "shiftmadagascar.page.link",
+//     });
+//     console.log(link);
+//     sendMail(email, [link]);
+//     return res.status(200).send("process done");
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send("process error: " + error);
+//   }
+// };

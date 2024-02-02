@@ -53,7 +53,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       default:
         break;
     }
-    console.log(response?.status);
+    console.log("Chat initialized");
     return res.status(200).send("Chat initialized");
   } catch (error: any) {
     console.log(error.message);
@@ -67,7 +67,9 @@ export const initChatHandler = async (req: Request, res: Response) => {
       query: req.body.query,
       file_id: req.body.file_id,
       demo_chat: req.body.demo_chat,
+      is_suggested_question: false,
     };
+    console.log("initializing chat");
     console.log(data);
     const response = await axios.post(
       "https://stage.aipdf.ai/ai-server/api/chat-initial",
@@ -97,7 +99,7 @@ export const regularChatHandler = async (req: Request, res: Response) => {
       "https://stage.aipdf.ai/ai-server/api/chat-continue",
       data
     );
-    console.log("here is the result ");
+    console.log("here is the result");
     console.log(response.data);
     return res.status(200).json(response.data);
   } catch (error: any) {

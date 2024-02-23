@@ -1,41 +1,42 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import { deleteFile, fileToBase64 } from "../helpers/file.helpers";
 export const setupFileHandler = async (req: Request, res: Response) => {
   try {
-    console.log("initializing app with ");
-    const [fileType, fileId] = [req.body.file_type, req.body.file_id];
+    const [fileType, fileId, document, filename] = [
+      req.body.file_type,
+      req.body.file_id,
+      req.file,
+      req.body.filename,
+    ];
     if (!fileType || !fileId) {
       throw new Error("Invalid data");
     }
     let response;
+    let base64 = "";
     switch (fileType) {
       case "pdf":
-        console.log("pdf process");
-        const [pdfDataB64, pdfFilename] = [
-          req.body.pdf_data_b64,
-          req.body.pdf_filename,
-        ];
+        if (!document) throw new Error("invalid data");
+        base64 = await fileToBase64(document.filename);
         response = await axios.post(
           "https://stage.aipdf.ai/ai-server/api/process-data-pdf",
           {
             file_id: fileId,
-            pdf_data_b64: pdfDataB64,
-            pdf_filename: pdfFilename,
+            pdf_data_b64: base64,
+            pdf_filename: filename,
           }
         );
         break;
       case "epub":
         console.log("process epub");
-        const [epubDataB64, epubFilename] = [
-          req.body.epub_data_b64,
-          req.body.epub_filename,
-        ];
+        if (!document) throw new Error("invalid data");
+        base64 = await fileToBase64(document.filename);
         response = await axios.post(
           "https://stage.aipdf.ai/ai-server/api/process-data-epub",
           {
             file_id: fileId,
-            epub_data_b64: epubDataB64,
-            epub_filename: epubFilename,
+            epub_data_b64: base64,
+            epub_filename: filename,
           }
         );
         break;
@@ -53,6 +54,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       default:
         break;
     }
+    if (document) deleteFile(document.filename);
     console.log("Chat initialized");
     return res.status(200).send("Chat initialized");
   } catch (error: any) {

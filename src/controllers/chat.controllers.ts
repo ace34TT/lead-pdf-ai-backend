@@ -9,6 +9,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       req.file,
       req.body.filename,
     ];
+    // console.log(document);
     if (!fileType || !fileId) {
       throw new Error("Invalid data");
     }
@@ -18,6 +19,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       case "pdf":
         if (!document) throw new Error("invalid data");
         base64 = await fileToBase64(document.filename);
+        // console.log("la valeur en base 64 est : ", base64);
         response = await axios.post(
           "https://stage.aipdf.ai/ai-server/api/process-data-pdf",
           {
@@ -54,7 +56,6 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       default:
         break;
     }
-    9;
     if (document) deleteFile(document.filename);
     console.log("Chat initialized");
     return res.status(200).send("Chat initialized");

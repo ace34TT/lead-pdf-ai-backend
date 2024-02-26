@@ -11,6 +11,7 @@ export const insertDataHandler = async (req: Request, res: Response) => {
       throw new Error("Invalid data");
     }
     const docRef = await firestore.collection(collectionName).add(data);
+    console.log("document inserted with id : ", docRef.id);
     return res.status(200).json({
       id: docRef.id,
     });

@@ -82,7 +82,7 @@ export const initChatHandler = async (req: Request, res: Response) => {
     return res.status(200).send("Chat initialized");
   } catch (error: any) {
     console.log("there was an error");
-    console.log(error);
+    // console.log(error);
     console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
@@ -107,7 +107,7 @@ export const regularChatHandler = async (req: Request, res: Response) => {
     return res.status(200).json(response.data);
   } catch (error: any) {
     console.log("there was an error");
-    console.log(error);
+    // console.log(error);
     console.log(error.message);
     return res.status(500).json({ message: error.message });
   }

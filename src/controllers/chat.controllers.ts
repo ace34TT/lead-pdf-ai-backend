@@ -54,6 +54,7 @@ export const setupFileHandler = async (req: Request, res: Response) => {
       default:
         break;
     }
+    9;
     if (document) deleteFile(document.filename);
     console.log("Chat initialized");
     return res.status(200).send("Chat initialized");
@@ -69,7 +70,7 @@ export const initChatHandler = async (req: Request, res: Response) => {
       query: req.body.query,
       file_id: req.body.file_id,
       demo_chat: req.body.demo_chat,
-      is_suggested_question: false,
+      is_suggested_question: true,
     };
     console.log("initializing chat");
     console.log(data);

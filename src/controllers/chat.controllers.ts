@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import { deleteFile, fileToBase64 } from "../helpers/file.helpers";
+import { firebase } from "../configs/firebase.config";
+const firestore = firebase.firestore();
 export const setupFileHandler = async (req: Request, res: Response) => {
   try {
     const [fileType, fileId, document, filename] = [
@@ -111,5 +113,49 @@ export const regularChatHandler = async (req: Request, res: Response) => {
     // console.log(error);
     console.log(error.message);
     return res.status(500).json({ message: error.message });
+  }
+};
+export const getChatList = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.query;
+    if (!email) throw new Error("invalide data ");
+
+    const pdfsRef = firestore.collection("pdfs");
+    const pdfsSnapshot = await pdfsRef.where("email_id", "==", email).get();
+
+    let pdfIds = pdfsSnapshot.docs.map((doc) => doc.id);
+    let results: any[] = [];
+
+    // Split pdfIds into chunks of 10
+    let chunks = [];
+    for (let i = 0; i < pdfIds.length; i += 10) {
+      chunks.push(pdfIds.slice(i, i + 10));
+    }
+
+    for (let chunk of chunks) {
+      const chatsRef = firestore.collection("chats");
+      const chatSnapshot = await chatsRef.where("file_id", "in", chunk).get();
+
+      chatSnapshot.forEach((chatDoc) => {
+        const chatData = chatDoc.data();
+        let result = {
+          docId: chatData.file_id,
+          docName: pdfsSnapshot.docs
+            .find((doc) => doc.id === chatData.file_id)!
+            .data().pdf_filename,
+          chatId: chatDoc.id,
+          hasTitle: chatData.conversation[1].title ? true : false,
+          title: chatData.conversation[1].title || "",
+        };
+        results.push(result);
+      });
+    }
+    console.log(results);
+
+    return res.status(200).json(results);
+  } catch (error) {
+    console.log("there was  an error ");
+    console.error(error);
+    return res.status(500).send("Failed processing this task ");
   }
 };

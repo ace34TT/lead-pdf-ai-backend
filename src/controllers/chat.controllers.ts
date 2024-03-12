@@ -82,7 +82,7 @@ export const initChatHandler = async (req: Request, res: Response) => {
       data
     );
     console.log(response.data);
-    return res.status(200).send("Chat initialized");
+    return res.status(200).json(response.data);
   } catch (error: any) {
     console.log("there was an error");
     // console.log(error);
@@ -144,8 +144,9 @@ export const getChatList = async (req: Request, res: Response) => {
             .find((doc) => doc.id === chatData.file_id)!
             .data().pdf_filename,
           chatId: chatDoc.id,
-          hasTitle: chatData.conversation[1].title ? true : false,
-          title: chatData.conversation[1].title || "",
+          title: chatData.conversation
+            ? chatData.conversation[1].title || ""
+            : "",
         };
         results.push(result);
       });

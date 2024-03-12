@@ -118,12 +118,21 @@ export const regularChatHandler = async (req: Request, res: Response) => {
 export const getChatList = async (req: Request, res: Response) => {
   try {
     const { email } = req.query;
+
     if (!email) throw new Error("invalide data ");
+    console.log(email);
 
     const pdfsRef = firestore.collection("pdfs");
     const pdfsSnapshot = await pdfsRef.where("email_id", "==", email).get();
 
     let pdfIds = pdfsSnapshot.docs.map((doc) => doc.id);
+    const pdfDocs = pdfsSnapshot.docs;
+    const pdfData: any[] = [];
+    pdfDocs.forEach((element) => {
+      pdfData.push({ ...element.data(), _id: element.id });
+    });
+    // console.log(pdfData);
+
     let results: any[] = [];
 
     // Split pdfIds into chunks of 10
@@ -138,6 +147,9 @@ export const getChatList = async (req: Request, res: Response) => {
 
       chatSnapshot.forEach((chatDoc) => {
         const chatData = chatDoc.data();
+        const chatPdf = pdfData.find((obj) => obj._id === chatData.file_id);
+        // console.log(chatPdf);
+
         let result = {
           docId: chatData.file_id,
           docName: pdfsSnapshot.docs

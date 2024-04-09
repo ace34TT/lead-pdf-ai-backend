@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import axios from "axios";
 import { deleteFile, fileToBase64 } from "../helpers/file.helpers";
 import { firebase } from "../configs/firebase.config";
+import { publicca } from "googleapis/build/src/apis/publicca";
 const firestore = firebase.firestore();
 export const setupFileHandler = async (req: Request, res: Response) => {
   try {
@@ -115,6 +116,30 @@ export const regularChatHandler = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+export const getDocumentList = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) throw new Error("invalide data ");
+    console.log(email);
+
+    const pdfsRef = firestore.collection("pdfs");
+    const pdfsSnapshot = await pdfsRef.where("email_id", "==", email).get();
+
+    const pdfDocs = pdfsSnapshot.docs;
+    const pdfData: any[] = [];
+    pdfDocs.forEach((element) => {
+      pdfData.push({ ...element.data(), _id: element.id });
+    });
+    console.log(pdfData);
+    return res.status(200).json(pdfData);
+  } catch (error) {
+    console.log("there was  an error ");
+    console.error(error);
+    return res.status(500).send("Failed processing this task ");
+  }
+};
+
 export const getChatList = async (req: Request, res: Response) => {
   try {
     const { email } = req.query;
@@ -131,6 +156,8 @@ export const getChatList = async (req: Request, res: Response) => {
     pdfDocs.forEach((element) => {
       pdfData.push({ ...element.data(), _id: element.id });
     });
+    console.log(pdfData);
+
     let results: any[] = [];
     let chunks = [];
     for (let i = 0; i < pdfIds.length; i += 10) {
@@ -139,7 +166,6 @@ export const getChatList = async (req: Request, res: Response) => {
     for (let chunk of chunks) {
       const chatsRef = firestore.collection("chats");
       const chatSnapshot = await chatsRef.where("file_id", "in", chunk).get();
-
       chatSnapshot.forEach((chatDoc) => {
         const chatData = chatDoc.data();
         const docsData = pdfsSnapshot.docs
@@ -159,6 +185,29 @@ export const getChatList = async (req: Request, res: Response) => {
     }
     console.log(results);
     return res.status(200).json(results);
+  } catch (error) {
+    console.log("there was  an error ");
+    console.error(error);
+    return res.status(500).send("Failed processing this task ");
+  }
+};
+export const deleteDocument = async (req: Request, res: Response) => {
+  try {
+    const { docId } = req.query;
+    console.log(docId);
+
+    const docRef = firestore.collection("pdfs").doc(docId as string);
+    let _query = firestore.collection("chats").where("file_id", "==", docId);
+    let _snapshot = await _query.get();
+    for (const _doc of _snapshot.docs) {
+      try {
+        await _doc.ref.delete();
+        console.log(`Deleted document ${_doc.id}`);
+      } catch (error) {
+        console.log(`Error deleting document ${_doc.id}:`, error);
+      }
+    }
+    docRef.delete();
   } catch (error) {
     console.log("there was  an error ");
     console.error(error);

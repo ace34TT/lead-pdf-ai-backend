@@ -116,6 +116,8 @@ export const deleteUserHandler = async (req: Request, res: Response) => {
     let snapshot = await query.get();
 
     for (const doc of snapshot.docs) {
+      console.log("pdf : " + doc.id);
+
       let _query = firestore.collection("chats").where("file_id", "==", doc.id);
       let _snapshot = await _query.get();
 

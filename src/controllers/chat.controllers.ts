@@ -156,34 +156,39 @@ export const getChatList = async (req: Request, res: Response) => {
     pdfDocs.forEach((element) => {
       pdfData.push({ ...element.data(), _id: element.id });
     });
-    console.log(pdfData);
+    // console.log(pdfData);
 
     let results: any[] = [];
+
+    // Split pdfIds into chunks of 10
     let chunks = [];
     for (let i = 0; i < pdfIds.length; i += 10) {
       chunks.push(pdfIds.slice(i, i + 10));
     }
+
     for (let chunk of chunks) {
       const chatsRef = firestore.collection("chats");
       const chatSnapshot = await chatsRef.where("file_id", "in", chunk).get();
       chatSnapshot.forEach((chatDoc) => {
         const chatData = chatDoc.data();
-        const docsData = pdfsSnapshot.docs
-          .find((doc) => doc.id === chatData.file_id)!
-          .data();
+        const chatPdf = pdfData.find((obj) => obj._id === chatData.file_id);
+        // console.log(chatPdf);
+
         let result = {
           docId: chatData.file_id,
-          docName: docsData.pdf_filename,
+          docName: pdfsSnapshot.docs
+            .find((doc) => doc.id === chatData.file_id)!
+            .data().pdf_filename,
           chatId: chatDoc.id,
           title: chatData.conversation
             ? chatData.conversation[1].title || ""
             : "",
-          created_at: docsData.created_at,
         };
         results.push(result);
       });
     }
     console.log(results);
+
     return res.status(200).json(results);
   } catch (error) {
     console.log("there was  an error ");

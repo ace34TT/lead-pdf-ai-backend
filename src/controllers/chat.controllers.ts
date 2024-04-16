@@ -171,11 +171,11 @@ export const getChatList = async (req: Request, res: Response) => {
       const chatSnapshot = await chatsRef.where("file_id", "in", chunk).get();
       chatSnapshot.forEach((chatDoc) => {
         const chatData = chatDoc.data();
-        const chatPdf = pdfData.find((obj) => obj._id === chatData.file_id);
+        // const chatPdf = pdfData.find((obj) => obj._id === chatData.file_id);
         // console.log(chatPdf);
-
         let result = {
           docId: chatData.file_id,
+          created_at: chatData.created_at,
           docName: pdfsSnapshot.docs
             .find((doc) => doc.id === chatData.file_id)!
             .data().pdf_filename,

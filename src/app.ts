@@ -25,7 +25,6 @@ app.use("/api/firebase", FirebaseRoutes);
 //     const { code } = req.query;
 //     const { tokens } = await OAuth2Client.getToken(code as string);
 //     OAuth2Client.setCredentials(tokens);
-//     // console.log(tokens);
 //     res.send("Authentication successful");
 //   } catch (error) {
 //     console.error("Error during authentication", error);

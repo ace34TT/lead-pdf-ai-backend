@@ -11,7 +11,6 @@ export const insertDataHandler = async (req: Request, res: Response) => {
       throw new Error("Invalid data");
     }
     const docRef = await firestore.collection(collectionName).add(data);
-    console.log("document inserted with id : ", docRef.id);
     return res.status(200).json({
       id: docRef.id,
     });
@@ -22,7 +21,6 @@ export const insertDataHandler = async (req: Request, res: Response) => {
 };
 export const findDataHandler = async (req: Request, res: Response) => {
   try {
-    console.log("finding");
     const [collectionName, conditions] = [
       req.body.collectionName,
       req.body.conditions,
@@ -39,8 +37,6 @@ export const findDataHandler = async (req: Request, res: Response) => {
     snapshot.forEach((doc) => {
       results.push({ _id: doc.id, ...doc.data() });
     });
-    // console.log(results);
-    // Send the results as a response
     res.status(200).json({
       results: results,
     });
@@ -51,18 +47,13 @@ export const findDataHandler = async (req: Request, res: Response) => {
 };
 export const updateDataHandler = async (req: Request, res: Response) => {
   try {
-    console.log("updating");
     const [collectionName, docId, data] = [
       req.body.collectionName,
       req.body.docId,
       req.body.data,
     ];
-    console.log(collectionName, docId, data);
-
     const docRef = firestore.collection(collectionName).doc(docId);
-    // Update the document
     await docRef.update(data);
-
     return res.status(200).send("document updated successfully");
   } catch (error) {
     console.log(error);
@@ -75,8 +66,6 @@ export const findDocumentById = async (req: Request, res: Response) => {
       req.body.collectionName,
       req.body.docId,
     ];
-    console.log(collectionName, documentId);
-
     const docRef = firestore.collection(collectionName).doc(documentId);
     // Get the document
     const doc = await docRef.get();
@@ -118,9 +107,7 @@ export const deleteUserHandler = async (req: Request, res: Response) => {
     for (const doc of snapshot.docs) {
       let _query = firestore.collection("chats").where("file_id", "==", doc.id);
       let _snapshot = await _query.get();
-
       for (const _doc of _snapshot.docs) {
-        console.log("--------" + _doc.id);
         try {
           await _doc.ref.delete();
           console.log(`Deleted document ${_doc.id}`);
@@ -146,7 +133,6 @@ export const signInUserWithEmailLinkHandler = async (
   res: Response
 ) => {
   const [email] = [req.body.email];
-  console.log("processing with " + email);
   try {
     var link = await firebase.auth().generateSignInWithEmailLink(email, {
       url: "http://localhost:5173",
@@ -161,7 +147,6 @@ export const signInUserWithEmailLinkHandler = async (
       },
       dynamicLinkDomain: "shiftmadagascar.page.link",
     });
-    console.log(link);
     sendMail(email, [link]);
     return res.status(200).send("process done");
   } catch (error) {

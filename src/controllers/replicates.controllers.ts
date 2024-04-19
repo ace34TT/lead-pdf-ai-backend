@@ -4,7 +4,7 @@ import { replicate } from "../configs/replicate.config";
 export const speechToTextHandler = async (req: Request, res: Response) => {
   try {
     const [vocal] = [req.body.vocal];
-    console.log(vocal);
+
     const output: any = await replicate.run(
       "openai/whisper:4d50797290df275329f202e48c76360b3f22b08d28c196cbc54600319435f8d2",
       {
@@ -23,7 +23,6 @@ export const speechToTextHandler = async (req: Request, res: Response) => {
         },
       }
     );
-    console.log(output);
     return res.status(200).json({ transcription: output.transcription });
   } catch (error) {
     return res.status(500).json({

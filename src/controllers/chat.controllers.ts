@@ -180,6 +180,7 @@ export const deleteDocument = async (req: Request, res: Response) => {
       }
     }
     docRef.delete();
+    return res.status(200).send("Document deleted successfully");
   } catch (error) {
     console.log("there was  an error ");
     console.error(error);

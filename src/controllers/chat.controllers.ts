@@ -145,6 +145,7 @@ export const getChatList = async (req: Request, res: Response) => {
       const chatSnapshot = await chatsRef.where("file_id", "in", chunk).get();
       chatSnapshot.forEach((chatDoc) => {
         const chatData = chatDoc.data();
+        console.log(chatData);
         let result = {
           docId: chatData.file_id,
           created_at: chatData.created_at,
@@ -153,7 +154,7 @@ export const getChatList = async (req: Request, res: Response) => {
             .data().pdf_filename,
           chatId: chatDoc.id,
           title: chatData.conversation
-            ? chatData.conversation[1].title || ""
+            ? chatData.conversation[0].content || ""
             : "",
         };
         results.push(result);
